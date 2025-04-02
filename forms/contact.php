@@ -20,8 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';  // SMTP server (Gmail in this case)
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'your-email@gmail.com'; // Your email
-        $mail->Password   = 'your-email-password';  // Your email password or app password
+        $mail->Username   = 'testprojectpython7@gmail.com'; // Your email
+        $mail->Password   = 'python12345';  // Your email password or app password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
