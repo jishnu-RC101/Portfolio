@@ -1,41 +1,46 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'testprojectpython7@gmail.com';
+require '../assets/vendor/phpmailer/Exception.php';
+require '../assets/vendor/phpmailer/PHPMailer.php';
+require '../assets/vendor/phpmailer/SMTP.php';
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $receiving_email_address = 'testprojectpython7@gmail.com';
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+    $mail = new PHPMailer(true);
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+    try {
+        // SMTP Configuration
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';  // SMTP server (Gmail in this case)
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'your-email@gmail.com'; // Your email
+        $mail->Password   = 'your-email-password';  // Your email password or app password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
+        // Email Details
+        $mail->setFrom($email, $name);
+        $mail->addAddress($receiving_email_address);
+        $mail->Subject = $subject;
+        $mail->Body    = "From: $name\nEmail: $email\n\nMessage:\n$message";
 
-  echo $contact->send();
+        // Send Email
+        if ($mail->send()) {
+            echo "Message sent successfully!";
+        } else {
+            echo "Message could not be sent.";
+        }
+    } catch (Exception $e) {
+        echo "Mailer Error: {$mail->ErrorInfo}";
+    }
+} else {
+    echo "Invalid request!";
+}
 ?>
